@@ -12,6 +12,8 @@
 <script src="<?php echo BASEURL; ?>/adminlte/plugins/jquery/jquery.min.js"></script>
 <script src="<?php echo BASEURL; ?>/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script src="<?php echo BASEURL; ?>/adminlte/dist/js/adminlte.min.js"></script>
+<script src="<?= BASEURL; ?>/adminlte/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="<?= BASEURL; ?>/adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script>
     const BASEURL = '<?php echo BASEURL; ?>';
 </script>
@@ -107,6 +109,18 @@
             }
         });
     }
+</script>
+
+<script>
+  $(function () {
+    $("#tabelSiswa").DataTable({ // Pastikan ID tabel sesuai
+      "responsive": true,
+      "autoWidth": false,
+      "language": {
+          "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/Indonesian.json" // Opsional: Biar bahasa Indo
+      }
+    });
+  });
 </script>
 </body>
 </html>

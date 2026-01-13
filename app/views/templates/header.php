@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <link rel="stylesheet" href="<?php echo BASEURL; ?>/adminlte/plugins/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="<?php echo BASEURL; ?>/adminlte/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="<?= BASEURL; ?>/adminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -39,7 +40,7 @@
 
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                    
+
                     <li class="nav-header">MENU UTAMA</li>
                     <li class="nav-item">
                         <a href="<?php echo BASEURL; ?>/siswa" class="nav-link">
@@ -69,7 +70,7 @@
                                 Cetak Rapor
                             </p>
                         </a>
-                    </li>                    
+                    </li>
                 </ul>
             </nav>
             </div>

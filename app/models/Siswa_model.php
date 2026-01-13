@@ -44,17 +44,17 @@ class Siswa_model
     {
         // Siapkan query SQL untuk INSERT dengan SEMUA KOLOM
         $query = "INSERT INTO siswa (
-            nisn, nis, nama_lengkap, nama_panggilan, 
-            berat_badan, tinggi_badan, jenis_kelamin, 
-            tempat_lahir, tanggal_lahir, agama, anak_ke, 
-            nama_ayah, nama_ibu, hp_ortu, pekerjaan_ayah, pekerjaan_ibu, 
+            nisn, nis, nama_lengkap, nama_panggilan,
+            berat_badan, tinggi_badan, jenis_kelamin,
+            tempat_lahir, tanggal_lahir, agama, anak_ke,
+            nama_ayah, nama_ibu, hp_ortu, pekerjaan_ayah, pekerjaan_ibu,
             alamat_jalan, kode_pos, kecamatan, kab_kota, provinsi, foto
-          ) 
+          )
           VALUES (
-            :nisn, :nis, :nama_lengkap, :nama_panggilan, 
-            :berat_badan, :tinggi_badan, :jenis_kelamin, 
-            :tempat_lahir, :tanggal_lahir, :agama, :anak_ke, 
-            :nama_ayah, :nama_ibu, :hp_ortu, :pekerjaan_ayah, :pekerjaan_ibu, 
+            :nisn, :nis, :nama_lengkap, :nama_panggilan,
+            :berat_badan, :tinggi_badan, :jenis_kelamin,
+            :tempat_lahir, :tanggal_lahir, :agama, :anak_ke,
+            :nama_ayah, :nama_ibu, :hp_ortu, :pekerjaan_ayah, :pekerjaan_ibu,
             :alamat_jalan, :kode_pos, :kecamatan, :kab_kota, :provinsi, :foto
           )";
 
@@ -121,7 +121,7 @@ class Siswa_model
                     kecamatan = :kecamatan,
                     kab_kota = :kab_kota,
                     provinsi = :provinsi,
-                    foto = :foto 
+                    foto = :foto
                   WHERE id = :id";
 
         // Persiapkan query
@@ -160,7 +160,23 @@ class Siswa_model
 
     public function hapusDataSiswa($id)
     {
-        $query = "DELETE FROM siswa WHERE id = :id";
+        // 1. AMBIL DATA DULU (Kita butuh nama fotonya)
+        // Kita pakai method getSiswaById yang sudah ada di model ini
+        $siswa = $this->getSiswaById($id);
+
+        // 2. CEK DAN HAPUS FISIK FOTO
+        // Jangan hapus jika itu foto 'default.jpg' (foto bawaan sistem)
+        if ($siswa['foto'] != 'default.jpg') {
+            $target = 'img/' . $siswa['foto'];
+
+            // Cek apakah file aslinya ada di folder?
+            if (file_exists($target)) {
+                unlink($target); // Hapus file dari folder
+            }
+        }
+
+        // 3. BARU HAPUS DATA DI DATABASE
+        $query = "DELETE FROM " . $this->table . " WHERE id = :id";
 
         $this->db->query($query);
         $this->db->bind('id', $id);
@@ -173,9 +189,9 @@ class Siswa_model
     public function cariDataSiswa($keyword)
     {
         // Kode Anda saat ini (diurutkan berdasarkan nama)
-        $query = "SELECT * FROM siswa WHERE 
-                    nama_lengkap LIKE :keyword OR 
-                    nis LIKE :keyword OR 
+        $query = "SELECT * FROM siswa WHERE
+                    nama_lengkap LIKE :keyword OR
+                    nis LIKE :keyword OR
                     nisn LIKE :keyword
                   ORDER BY nama_lengkap ASC";
 
@@ -184,4 +200,5 @@ class Siswa_model
 
         return $this->db->resultSet();
     }
+
 }

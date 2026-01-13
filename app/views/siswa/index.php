@@ -35,34 +35,54 @@
                     </button>
                 </div>
             </div>
-            <div class="card-body p-0">
-                <ul class="list-group list-group-flush">
-                    <?php if (empty($data['siswa'])) : ?>
-                        <li class="list-group-item">Belum ada data siswa.</li>
-                    <?php endif; ?>
-
-                    <?php foreach ($data['siswa'] as $siswa) : ?>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <img src="<?php echo BASEURL; ?>/img/<?php echo $siswa['foto']; ?>" width="50" height="50" class="rounded-circle mr-3">
-                                <?php echo $siswa['nama_lengkap']; ?> (<?php echo $siswa['nis']; ?>)
-                            </div>
-                            <div>
-                                <a href="#" class="btn btn-warning btn-sm tampilModalUbah" data-toggle="modal" data-target="#formModal" data-id="<?php echo $siswa['id']; ?>">
-                                    <i class="fas fa-edit"></i> Ubah
-                                </a>
-
-                                <a href="<?php echo BASEURL; ?>/siswa/detail/<?php echo $siswa['id']; ?>" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-eye"></i> Detail
-                                </a>
-
-                                <a href="<?php echo BASEURL; ?>/siswa/hapus/<?php echo $siswa['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
-                                    <i class="fas fa-trash"></i> Hapus
-                                </a>
-                            </div>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
+            <div class="card-body table-responsive p-0">
+                <table id="tabelSiswa" class="table table-hover text-nowrap">
+                    <thead class="thead-light">
+                        <tr>
+                            <th style="width: 5%">No</th>
+                            <th style="width: 10%">Foto</th>
+                            <th style="width: 15%">NIS</th>
+                            <th>Nama Lengkap</th>
+                            <th style="width: 15%">Kelas</th>
+                            <th style="width: 20%" class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php $no = 1;
+                        foreach ($data['siswa'] as $siswa) : ?>
+                            <tr>
+                                <td class="align-middle"><?= $no++; ?></td>
+                                <td class="align-middle text-center">
+                                    <div style="width: 60px; height: 60px; overflow: hidden; border-radius: 50%; margin: 0 auto; border: 2px solid #dee2e6;">
+                                        <img src="<?= BASEURL; ?>/img/<?= $siswa['foto']; ?>"
+                                            alt="<?= $siswa['nama_lengkap']; ?>"
+                                            style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                                    </div>
+                                </td>
+                                <td class="align-middle font-weight-bold text-muted"><?= $siswa['nis']; ?></td>
+                                <td class="align-middle">
+                                    <?= $siswa['nama_lengkap']; ?>
+                                </td>
+                                <td class="align-middle">
+                                    <span class="badge badge-info p-2"><?= $siswa['kelas']; ?></span>
+                                </td>
+                                <td class="align-middle text-center">
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="<?= BASEURL; ?>/siswa/detail/<?= $siswa['id']; ?>" class="btn btn-primary" title="Detail">
+                                            <i class="fas fa-eye"></i> Detail
+                                        </a>
+                                        <a href="<?= BASEURL; ?>/siswa/ubah/<?= $siswa['id']; ?>" class="btn btn-warning tampilModalUbah text-white" data-toggle="modal" data-target="#formModal" data-id="<?= $siswa['id']; ?>" title="Ubah">
+                                            <i class="fas fa-pen"></i> Edit
+                                        </a>
+                                        <a href="<?= BASEURL; ?>/siswa/hapus/<?= $siswa['id']; ?>" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus data <?= $siswa['nama_lengkap']; ?>?');" title="Hapus">
+                                            <i class="fas fa-trash"></i> Hapus
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

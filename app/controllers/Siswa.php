@@ -167,10 +167,10 @@ class Siswa extends Controller
         }
 
         // 3. Cek ukuran file (misal: maks 2MB)
-        if ($ukuranFile > 2000000) {
-            Flasher::setFlash('Upload Gagal', 'ukuran gambar terlalu besar! (Maks 2MB)', 'danger');
-            return false;
-        }
+        // if ($ukuranFile > 2000000) {
+        //     Flasher::setFlash('Upload Gagal', 'ukuran gambar terlalu besar! (Maks 2MB)', 'danger');
+        //     return false;
+        // }
 
         // 4. Lolos pengecekan, generate nama file baru
         // uniqid() untuk memberi string acak
@@ -178,12 +178,55 @@ class Siswa extends Controller
         $namaFileBaru .= '.';
         $namaFileBaru .= $ekstensiGambar;
 
-        // 5. Pindahkan file ke folder public/img/
-        if (move_uploaded_file($tmpName, 'img/' . $namaFileBaru)) {
-            return $namaFileBaru; // Kembalikan nama file baru jika sukses
+        $tujuan = 'img/' . $namaFileBaru;
+
+        // Panggil fungsi compressImage yang ada di bawah
+        // 75 adalah kualitas gambar (bisa diatur 0-100)
+        if ($this->compressImage($tmpName, $tujuan, 75)) {
+            return $namaFileBaru;
         } else {
-            Flasher::setFlash('Upload Gagal', 'terjadi kesalahan saat memindah file.', 'danger');
+            Flasher::setFlash('Upload Gagal', 'terjadi kesalahan saat kompres/pindah file.', 'danger');
             return false;
         }
     }
+
+    private function compressImage($source, $destination, $quality) {
+    $info = getimagesize($source);
+
+    // 1. Buat image resource berdasarkan tipe file
+    if ($info['mime'] == 'image/jpeg')
+        $image = imagecreatefromjpeg($source);
+    elseif ($info['mime'] == 'image/gif')
+        $image = imagecreatefromgif($source);
+    elseif ($info['mime'] == 'image/png')
+        $image = imagecreatefrompng($source);
+    else
+        return false;
+
+    // 2. CEK ORIENTASI (Fix untuk foto dari HP Samsung/iPhone agar tidak miring)
+    // Fungsi exif_read_data() membutuhkan ekstensi php_exif aktif di php.ini
+    if (function_exists('exif_read_data') && $info['mime'] == 'image/jpeg') {
+        $exif = @exif_read_data($source);
+        if($exif && isset($exif['Orientation'])) {
+            $orientation = $exif['Orientation'];
+            if($orientation != 1){
+                $deg = 0;
+                switch ($orientation) {
+                    case 3: $deg = 180; break;
+                    case 6: $deg = 270; break;
+                    case 8: $deg = 90; break;
+                }
+                if ($deg) {
+                    $image = imagerotate($image, $deg, 0);
+                }
+            }
+        }
+    }
+
+    // 3. Simpan gambar yang sudah dikompres & diputar
+    imagejpeg($image, $destination, $quality);
+    imagedestroy($image);
+
+    return true;
+}
 }
