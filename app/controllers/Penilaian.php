@@ -3,19 +3,20 @@
 class Penilaian extends Controller
 {
 
-    public function index()
-    {
-        // Ambil tanggal dari filter, default hari ini
+   public function index() {
         $tanggal = (isset($_POST['tgl'])) ? $_POST['tgl'] : date('Y-m-d');
 
-        $data['judul'] = 'Daftar Penilaian Harian';
+        $data['judul'] = 'Penilaian Harian';
         $data['tanggal_pilihan'] = $tanggal;
         $data['siswa'] = $this->model('Siswa_model')->getAllSiswa();
 
-        // Tambahkan status penilaian per siswa untuk tanggal terpilih
+        // PENTING: Cek status A dan B secara terpisah (Kirim 3 argumen)
         foreach ($data['siswa'] as $key => $s) {
-            $nilai = $this->model('Penilaian_model')->getPenilaianBySiswaTanggal($s['id'], $tanggal);
-            $data['siswa'][$key]['status'] = !empty($nilai) ? 'Selesai' : 'Belum';
+            $nilaiA = $this->model('Penilaian_model')->getPenilaianBySiswaTanggal($s['id'], $tanggal, 'A');
+            $nilaiB = $this->model('Penilaian_model')->getPenilaianBySiswaTanggal($s['id'], $tanggal, 'B');
+
+            $data['siswa'][$key]['status_A'] = !empty($nilaiA) ? 'Selesai' : 'Belum';
+            $data['siswa'][$key]['status_B'] = !empty($nilaiB) ? 'Selesai' : 'Belum';
         }
 
         $this->view('templates/header', $data);
@@ -50,7 +51,7 @@ class Penilaian extends Controller
         }
 
         // Ambil history nilai di tanggal tersebut
-        $data['nilai_existing'] = $this->model('Penilaian_model')->getPenilaianBySiswaTanggal($id_siswa, $tanggal);
+        $data['nilai_existing'] = $this->model('Penilaian_model')->getPenilaianBySiswaTanggal($id_siswa, $tanggal, $kelompok);
         $data['foto_existing'] = $this->model('Penilaian_model')->getFotoBySiswaTanggal($id_siswa, $tanggal);
 
         $this->view('templates/header', $data);
@@ -59,18 +60,18 @@ class Penilaian extends Controller
     }
 
     public function simpan()
-{
-    // Pastikan parameter kedua ($_FILES) dikirim ke model
-    if ($this->model('Penilaian_model')->simpanPenilaianHarian($_POST, $_FILES)) {
-        Flasher::setFlash('Penilaian harian', 'berhasil disimpan', 'success');
-    } else {
-        Flasher::setFlash('Gagal', 'menyimpan penilaian', 'danger');
-    }
+    {
+        // Pastikan parameter kedua ($_FILES) dikirim ke model
+        if ($this->model('Penilaian_model')->simpanPenilaianHarian($_POST, $_FILES)) {
+            Flasher::setFlash('Penilaian harian', 'berhasil disimpan', 'success');
+        } else {
+            Flasher::setFlash('Gagal', 'menyimpan penilaian', 'danger');
+        }
 
-    $id_siswa = $_POST['id_siswa'];
-    $kelompok = $_POST['kelompok'];
-    $tanggal = $_POST['tanggal'];
-    header('Location: ' . BASEURL . '/penilaian/input/' . $id_siswa . '/' . $kelompok . '/' . $tanggal);
-    exit;
-}
+        $id_siswa = $_POST['id_siswa'];
+        $kelompok = $_POST['kelompok'];
+        $tanggal = $_POST['tanggal'];
+        header('Location: ' . BASEURL . '/penilaian/input/' . $id_siswa . '/' . $kelompok . '/' . $tanggal);
+        exit;
+    }
 }

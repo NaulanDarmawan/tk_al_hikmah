@@ -47,11 +47,12 @@ class Penilaian_model
         return $mapped;
     }
 
-    public function getPenilaianBySiswaTanggal($id_siswa, $tanggal)
+    public function getPenilaianBySiswaTanggal($id_siswa, $tanggal, $kelompok)
     {
-        $this->db->query("SELECT id_indikator, nilai FROM penilaian WHERE id_siswa = :id_siswa AND tanggal = :tanggal");
+        $this->db->query("SELECT id_indikator, nilai FROM penilaian WHERE id_siswa = :id_siswa AND tanggal = :tanggal AND kelompok = :kelompok");
         $this->db->bind('id_siswa', $id_siswa);
         $this->db->bind('tanggal', $tanggal);
+        $this->db->bind('kelompok', $kelompok);
 
         $result = $this->db->resultSet();
         $nilaiArr = [];
@@ -65,6 +66,7 @@ class Penilaian_model
     {
         $id_siswa = $data['id_siswa'];
         $tanggal = $data['tanggal'];
+        $kelompok = $data['kelompok'];
 
         // PATH ABSOLUT: Lebih aman untuk Laragon/XAMPP
         $folder_tujuan = dirname(__DIR__, 2) . '/public/img/penilaian/';
@@ -106,13 +108,14 @@ class Penilaian_model
             }
 
             // 4. Simpan (REPLACE INTO akan mengupdate jika id_siswa+id_indikator+tgl sudah ada)
-            $query = "REPLACE INTO penilaian (id_siswa, id_indikator, tanggal, nilai, foto)
-                      VALUES (:id_siswa, :id_indikator, :tanggal, :skala, :foto)";
+            $query = "REPLACE INTO penilaian (id_siswa, id_indikator, tanggal, kelompok, nilai, foto)
+                  VALUES (:id_siswa, :id_indikator, :tanggal, :kelompok, :skala, :foto)";
 
             $this->db->query($query);
             $this->db->bind('id_siswa', $id_siswa);
             $this->db->bind('id_indikator', $id_indikator);
             $this->db->bind('tanggal', $tanggal);
+            $this->db->bind('kelompok', $kelompok);
             $this->db->bind('skala', $skala);
             $this->db->bind('foto', $nama_file_foto);
             $this->db->execute();
