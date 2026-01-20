@@ -1,61 +1,72 @@
-<div class="row mb-3">
-    <div class="col-lg-8">
-        <form action="<?php echo BASEURL; ?>/penilaian" method="post">
-            <div class="input-group">
-                <input type="text" class="form-control"
-                    placeholder="Cari nama siswa, NIS, atau NISN..."
-                    name="keyword"
-                    value="<?php echo $data['keyword']; ?>"
-                    autocomplete="off">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-primary" type="submit">
-                        <i class="fas fa-search"></i> Cari
-                    </button>
-                    <a href="<?php echo BASEURL; ?>/penilaian" class="btn btn-outline-secondary">Reset</a>
-                </div>
+<div class="row mb-3 align-items-center">
+    <div class="col-md-6">
+        <h4 class="text-muted"><i class="fas fa-calendar-check text-primary"></i> Penilaian Harian</h4>
+    </div>
+    <div class="col-md-6 text-right">
+        <form action="<?= BASEURL; ?>/penilaian" method="post" class="d-inline-block">
+            <div class="input-group shadow-sm" style="width: 250px;">
+                <input type="date" name="tgl" class="form-control" value="<?= $data['tanggal_pilihan']; ?>" onchange="this.form.submit()">
             </div>
         </form>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-lg-12">
-        <div class="card card-primary card-outline">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-users"></i> Daftar Siswa - Penilaian Harian</h3>
-                </div>        
-            <div class="card-body p-0">
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th style="width: 10px">#</th>
-                            <th>Nama Siswa</th>
-                            <th>NIS</th> <th style="width: 200px text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php $no = 1; foreach ($data['siswa'] as $siswa) : ?>
-                        <tr>
-                            <td><?php echo $no++; ?>.</td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <img src="<?php echo BASEURL; ?>/img/<?php echo $siswa['foto']; ?>" class="rounded-circle mr-2" style="width: 30px; height: 30px; object-fit:cover;" alt="Foto">
-                                    <strong><?php echo $siswa['nama_lengkap']; ?></strong>
-                                </div>
-                            </td>
-                            <td>
-                                <?php echo $siswa['nis']; ?>
-                            </td>
-                            <td>
-                                <a href="<?php echo BASEURL; ?>/penilaian/input/<?php echo $siswa['id']; ?>" class="btn btn-success btn-sm btn-block">
-                                    <i class="fas fa-edit"></i> Update Perkembangan
-                                </a>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+<div class="card card-primary card-outline card-outline-tabs shadow-sm">
+    <div class="card-header p-0 border-bottom-0">
+        <ul class="nav nav-tabs" id="tabSiswa" role="tablist">
+            <li class="nav-item"><a class="nav-link active" data-toggle="pill" href="#tab-a">Kelompok A</a></li>
+            <li class="nav-item"><a class="nav-link" data-toggle="pill" href="#tab-b">Kelompok B</a></li>
+        </ul>
+    </div>
+    <div class="card-body">
+        <div class="tab-content">
+            <?php foreach (['a' => 'A', 'b' => 'B'] as $id_tab => $kode) : ?>
+                <div class="tab-pane fade <?= ($id_tab == 'a') ? 'show active' : ''; ?>" id="tab-<?= $id_tab; ?>">
+                    <table class="table table-striped table-hover datatable-siswa" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th style="width: 10px">#</th>
+                                <th>Nama Siswa</th>
+                                <th class="text-center">NIS</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $no = 1;
+                            foreach ($data['siswa'] as $s) : ?>
+                                <tr>
+                                    <td><?= $no++; ?></td>
+                                    <td><strong><?= $s['nama_lengkap']; ?></strong></td>
+                                    <td class="text-center"><?= $s['nis']; ?></td>
+                                    <td class="text-center">
+                                        <span class="badge badge-pill <?= $s['status'] == 'Selesai' ? 'badge-success' : 'badge-warning' ?> px-3">
+                                            <?= $s['status'] == 'Selesai' ? '✓ Selesai' : '⏳ Belum' ?>
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="<?= BASEURL; ?>/penilaian/input/<?= $s['id']; ?>/<?= $kode; ?>/<?= $data['tanggal_pilihan']; ?>" class="btn btn-primary btn-sm shadow-sm px-3">
+                                            <i class="fas fa-edit"></i> Isi Nilai
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endforeach; ?>
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('.datatable-siswa').DataTable({
+            "responsive": true,
+            "autoWidth": false,
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/Indonesian.json"
+            }
+        });
+    });
+</script>

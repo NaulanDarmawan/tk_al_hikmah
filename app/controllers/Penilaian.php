@@ -1,62 +1,57 @@
 <?php
 
-class Penilaian extends Controller {
-    
+class Penilaian extends Controller
+{
+
     public function index()
     {
-        $data['judul'] = 'Penilaian Harian Siswa';
-        
-        // --- LOGIKA SEARCH ---
-        if ( isset($_POST['keyword']) ) {
-            // Cari siswa berdasarkan keyword
-            $data['siswa'] = $this->model('Siswa_model')->cariDataSiswa($_POST['keyword']);
-            $data['keyword'] = $_POST['keyword']; // Simpan keyword agar tidak hilang di view
-        } else {
-            // Jika tidak mencari, ambil semua siswa (terbaru)
-            $data['siswa'] = $this->model('Siswa_model')->getAllSiswa();
-            $data['keyword'] = '';
+        // Ambil tanggal dari filter, default hari ini
+        $tanggal = (isset($_POST['tgl'])) ? $_POST['tgl'] : date('Y-m-d');
+
+        $data['judul'] = 'Daftar Penilaian Harian';
+        $data['tanggal_pilihan'] = $tanggal;
+        $data['siswa'] = $this->model('Siswa_model')->getAllSiswa();
+
+        // Tambahkan status penilaian per siswa untuk tanggal terpilih
+        foreach ($data['siswa'] as $key => $s) {
+            $nilai = $this->model('Penilaian_model')->getPenilaianBySiswaTanggal($s['id'], $tanggal);
+            $data['siswa'][$key]['status'] = !empty($nilai) ? 'Selesai' : 'Belum';
         }
-        // ---------------------
 
         $this->view('templates/header', $data);
         $this->view('penilaian/index', $data);
         $this->view('templates/footer');
     }
 
-    /**
-     * Method Input dengan Pilihan Kelompok Manual
-     * URL: /penilaian/input/{id_siswa}/{kelompok}
-     */
-    public function input($id_siswa, $kelompok = 'A')
+    public function input($id_siswa, $kelompok, $tanggal = null)
     {
-        $data['judul'] = 'Input Perkembangan Anak';
-        
-        // 1. Ambil Data Siswa
+        if ($tanggal == null) $tanggal = date('Y-m-d');
+
+        $data['judul'] = 'Input Penilaian Harian';
         $data['siswa'] = $this->model('Siswa_model')->getSiswaById($id_siswa);
+        $data['tanggal'] = $tanggal;
+        $data['kelompok'] = $kelompok;
 
-        // 2. Set Kelompok Aktif (Default 'A' jika tidak ada di URL)
-        $kelompok = strtoupper($kelompok);
-        if ($kelompok != 'A' && $kelompok != 'B') {
-            $kelompok = 'A';
+        // Ambil data indikator berdasarkan kelompok (A atau B)
+        $raw_indikator = $this->model('Penilaian_model')->getIndikatorByKelompok($kelompok);
+
+        // Siapkan struktur array agar tidak error di View
+        $data['indikator'] = [
+            'AGAMA' => [],
+            'JATI_DIRI' => [],
+            'STEAM' => []
+        ];
+
+        foreach ($raw_indikator as $i) {
+            // Mengelompokkan berdasarkan field 'kategori' dan 'sub_elemen'
+            $kat = $i['kategori'];
+            $sub = $i['sub_elemen'];
+            $data['indikator'][$kat][$sub][] = $i;
         }
-        $data['kelompok_aktif'] = $kelompok;
 
-        // 3. Ambil Data Indikator dari Database
-        $rawIndikator = $this->model('Penilaian_model')->getIndikatorByKelompok($kelompok);
-        
-        // Struktur ulang data agar mudah di-loop di View:
-        // $indikator[KATEGORI][SUB_ELEMEN][] = ['id' => ..., 'deskripsi' => ...]
-        $indikatorStructured = [];
-        foreach ($rawIndikator as $row) {
-            $indikatorStructured[$row['kategori']][$row['sub_elemen']][] = [
-                'id' => $row['id'],
-                'deskripsi' => $row['deskripsi']
-            ];
-        }
-        $data['indikator'] = $indikatorStructured;
-
-        // 4. Ambil Data Penilaian Terakhir (History) untuk Pre-fill
-        $data['nilai_terbaru'] = $this->model('Penilaian_model')->getNilaiTerbaru($id_siswa, $kelompok);
+        // Ambil history nilai di tanggal tersebut
+        $data['nilai_existing'] = $this->model('Penilaian_model')->getPenilaianBySiswaTanggal($id_siswa, $tanggal);
+        $data['foto_existing'] = $this->model('Penilaian_model')->getFotoBySiswaTanggal($id_siswa, $tanggal);
 
         $this->view('templates/header', $data);
         $this->view('penilaian/input', $data);
@@ -64,18 +59,18 @@ class Penilaian extends Controller {
     }
 
     public function simpan()
-    {
-        if ($this->model('Penilaian_model')->simpanPenilaian($_POST) > 0) {
-            Flasher::setFlash('Penilaian harian', 'berhasil disimpan', 'success');
-        } else {
-            // Jika 0, mungkin tidak ada perubahan atau error, tapi kita anggap sukses update saja
-            Flasher::setFlash('Penilaian harian', 'berhasil disimpan', 'success');
-        }
-        
-        // Redirect kembali ke halaman input siswa tersebut agar guru bisa lanjut edit
-        $id_siswa = $_POST['id_siswa'];
-        $kelompok = $_POST['kelompok'];
-        header('Location: ' . BASEURL . '/penilaian/input/' . $id_siswa . '/' . $kelompok);
-        exit;
+{
+    // Pastikan parameter kedua ($_FILES) dikirim ke model
+    if ($this->model('Penilaian_model')->simpanPenilaianHarian($_POST, $_FILES)) {
+        Flasher::setFlash('Penilaian harian', 'berhasil disimpan', 'success');
+    } else {
+        Flasher::setFlash('Gagal', 'menyimpan penilaian', 'danger');
     }
+
+    $id_siswa = $_POST['id_siswa'];
+    $kelompok = $_POST['kelompok'];
+    $tanggal = $_POST['tanggal'];
+    header('Location: ' . BASEURL . '/penilaian/input/' . $id_siswa . '/' . $kelompok . '/' . $tanggal);
+    exit;
+}
 }

@@ -1,292 +1,354 @@
 <style>
-    /* Styling untuk Upload Foto */
+    /* 1. TYPOGRAPHY: Super Ramah Mata Senior */
+    .content-wrapper {
+        background-color: #f0f2f5;
+    }
+
+    /* Font diperbesar secara global untuk teks utama */
+    .deskripsi-text {
+        font-size: 19px !important;
+        /* Ukuran besar */
+        font-weight: 800 !important;
+        /* Sangat tebal/bold */
+        color: #1a202c;
+        line-height: 1.4;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .sub-judul-text {
+        font-size: 16px;
+        font-weight: 700;
+        color: #4a5568;
+        text-transform: uppercase;
+    }
+
+    /* 2. TAB COLORS: Lebih Berwarna & Ceria */
+    .nav-tabs .nav-link {
+        color: #4a5568;
+        border-radius: 12px 12px 0 0;
+        margin-right: 5px;
+        border: none;
+        background: #e2e8f0;
+    }
+
+    /* Warna Tab Aktif Spesifik */
+    #tab-link-AGAMA.active {
+        background-color: #6366f1 !important;
+        color: white !important;
+    }
+
+    /* Indigo */
+    #tab-link-JATI_DIRI.active {
+        background-color: #ec4899 !important;
+        color: white !important;
+    }
+
+    /* Pink */
+    #tab-link-STEAM.active {
+        background-color: #10b981 !important;
+        color: white !important;
+    }
+
+    /* Emerald */
+
+    /* 3. RADIO EVALUATION: Kontras Tinggi */
+    .eval-radio {
+        display: none;
+    }
+
+    .eval-label {
+        display: block;
+        padding: 15px 5px;
+        border-radius: 10px;
+        border: 3px solid #cbd5e1;
+        cursor: pointer;
+        transition: 0.2s;
+        font-weight: 900;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    /* Warna saat terpilih */
+    .eval-radio:checked+.eval-label.bb {
+        background: #fecaca;
+        border-color: #dc2626;
+        color: #991b1b;
+    }
+
+    .eval-radio:checked+.eval-label.mb {
+        background: #fef08a;
+        border-color: #ca8a04;
+        color: #854d0e;
+    }
+
+    .eval-radio:checked+.eval-label.bsh {
+        background: #bbf7d0;
+        border-color: #16a34a;
+        color: #14532d;
+    }
+
+    .eval-radio:checked+.eval-label.bsb {
+        background: #bae6fd;
+        border-color: #0284c7;
+        color: #0c4a6e;
+    }
+
+    /* 4. PHOTO UI: Fix Bersandingan Icon & Preview */
     .upload-ui-container {
         position: relative;
-        width: 80px;
-        height: 80px;
+        width: 85px;
+        height: 85px;
         margin: 0 auto;
     }
 
     .upload-box {
         width: 100%;
         height: 100%;
-        border: 2px dashed #ccc;
-        border-radius: 8px;
+        border: 3px dashed #cbd5e1;
+        border-radius: 15px;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        background: #f8f9fa;
-        transition: all 0.3s;
+        background: #ffffff;
+        transition: 0.3s;
+        overflow: hidden;
     }
 
     .upload-box:hover {
-        border-color: #007bff;
-        background: #e9ecef;
+        border-color: #6366f1;
+        background: #f8fafc;
     }
 
-    .upload-box.state-filled {
-        border: 2px solid #ddd;
-        padding: 0;
-        position: relative;
-    }
-
-    .upload-box.state-filled img {
+    .upload-box img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        border-radius: 6px;
+    }
+
+    /* Logic: Jika img tidak kosong, icon kamera harus d-none */
+    .state-filled .icon-camera {
+        display: none;
+    }
+
+    .state-empty img {
+        display: none;
     }
 
     .remove-btn {
         position: absolute;
-        top: -8px;
-        right: -8px;
-        background: red;
+        top: -10px;
+        right: -10px;
+        background: #ef4444;
         color: white;
         border-radius: 50%;
-        width: 24px;
-        height: 24px;
+        width: 28px;
+        height: 28px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 12px;
         cursor: pointer;
-        opacity: 0;
-        transition: opacity 0.2s;
+        border: 3px solid white;
         z-index: 10;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
 
-    .upload-ui-container:hover .remove-btn {
-        opacity: 1;
+    /* 5. CARD & FOOTER */
+    .card-rapor {
+        border-radius: 20px;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
 
-    .hidden-input {
-        display: none;
+    .legend-box {
+        background: #ffffff;
+        border-radius: 15px;
+        border: 2px solid #e2e8f0;
+        padding: 15px;
     }
 </style>
 
-<div class="row">
+<div class="row mb-4">
     <div class="col-12">
-        <div class="callout callout-info">
-            <div class="d-flex justify-content-between align-items-center">
+        <div class="card card-rapor bg-white p-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
                 <div>
-                    <h5><i class="fas fa-user-graduate"></i> <?php echo $data['siswa']['nama_lengkap']; ?></h5>
-                    <p class="mb-0 text-muted">
-                        NIS: <?php echo $data['siswa']['nis']; ?> | 
-                        Update Terakhir: <?php echo date('d F Y'); ?>
+                    <h2 class="mb-1 font-weight-bold text-dark"><i class="fas fa-child text-primary mr-2"></i> <?= $data['siswa']['nama_lengkap']; ?></h2>
+                    <p class="mb-0 text-muted" style="font-size: 18px;">
+                        NIS: <b><?= $data['siswa']['nis']; ?></b> | Kelompok: <span class="badge badge-pill badge-primary px-3"><?= $data['kelompok']; ?></span>
                     </p>
-                    <input type="hidden" id="id_siswa_aktif" value="<?php echo $data['siswa']['id']; ?>">
                 </div>
-                <div class="d-flex align-items-center">
-                    <div class="form-group mb-0 mr-3 d-flex align-items-center">
-                        <select class="form-control form-control-sm font-weight-bold border-info" id="pilih_kelompok">
-                            <option value="A" <?php echo ($data['kelompok_aktif'] == 'A') ? 'selected' : ''; ?>>Kelompok A</option>
-                            <option value="B" <?php echo ($data['kelompok_aktif'] == 'B') ? 'selected' : ''; ?>>Kelompok B</option>
-                        </select>
-                    </div>
-                    
-                    <button class="btn btn-primary btn-lg" form="formPenilaian">
-                        <i class="fas fa-save"></i> Simpan Perkembangan
-                    </button>
+                <div class="text-md-right mt-3 mt-md-0">
+                    <label class="small font-weight-bold text-uppercase text-muted mb-1 d-block">Pilih Hari:</label>
+                    <input type="date" id="tgl_picker" class="form-control form-control-lg font-weight-bold shadow-sm"
+                        style="border-radius: 10px; border: 2px solid #6366f1; color: #6366f1;"
+                        value="<?= $data['tanggal']; ?>" onchange="pindahTanggal(this.value)">
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<form action="<?php echo BASEURL; ?>/penilaian/simpan" method="post" id="formPenilaian" enctype="multipart/form-data">
-    <input type="hidden" name="id_siswa" value="<?php echo $data['siswa']['id']; ?>">
-    <input type="hidden" name="kelompok" value="<?php echo $data['kelompok_aktif']; ?>">
-    <input type="hidden" name="tanggal" value="<?php echo date('Y-m-d'); ?>">
+<form action="<?= BASEURL; ?>/penilaian/simpan" method="post" id="formPenilaian" enctype="multipart/form-data">
+    <input type="hidden" name="id_siswa" value="<?= $data['siswa']['id']; ?>">
+    <input type="hidden" name="kelompok" value="<?= $data['kelompok']; ?>">
+    <input type="hidden" name="tanggal" value="<?= $data['tanggal']; ?>">
 
-    <div class="card card-primary card-tabs">
-        <div class="card-header p-0 pt-1">
-            <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
+    <div class="card card-rapor card-outline card-tabs">
+        <div class="card-header p-0 pt-1 border-bottom-0" style="background: #f8fafc;">
+            <ul class="nav nav-tabs nav-justified" id="custom-tabs-one-tab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" data-toggle="pill" href="#tab-agama">Nilai Agama & Budi Pekerti</a>
+                    <a class="nav-link active py-3 font-weight-bold" id="tab-link-AGAMA" data-toggle="pill" href="#tab-AGAMA">
+                        <i class="fas fa-pray mr-2"></i> AGAMA & BUDI PEKERTI
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="pill" href="#tab-jati">Jati Diri</a>
+                    <a class="nav-link py-3 font-weight-bold" id="tab-link-JATI_DIRI" data-toggle="pill" href="#tab-JATI_DIRI">
+                        <i class="fas fa-heart mr-2"></i> JATI DIRI
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="pill" href="#tab-steam">Literasi & STEAM</a>
+                    <a class="nav-link py-3 font-weight-bold" id="tab-link-STEAM" data-toggle="pill" href="#tab-STEAM">
+                        <i class="fas fa-lightbulb mr-2"></i> LITERASI & STEAM
+                    </a>
                 </li>
             </ul>
         </div>
-        
         <div class="card-body p-0">
             <div class="tab-content">
-                
-                <?php 
-                    // Mapping ID Tab ke Key Data di Controller
-                    $tabs = [
-                        'tab-agama' => 'AGAMA', 
-                        'tab-jati' => 'JATI_DIRI', 
-                        'tab-steam' => 'STEAM'
-                    ];
-                ?>
-
-                <?php foreach ($tabs as $id_tab => $key_data) : ?>
-                    <div class="tab-pane fade <?php echo ($id_tab == 'tab-agama') ? 'show active' : ''; ?>" id="<?php echo $id_tab; ?>" role="tabpanel">
+                <?php foreach (['AGAMA', 'JATI_DIRI', 'STEAM'] as $kat) : ?>
+                    <div class="tab-pane fade <?= ($kat == 'AGAMA') ? 'show active' : ''; ?>" id="tab-<?= $kat; ?>">
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover mb-0">
-                                <thead class="thead-light text-center">
+                            <table class="table table-bordered mb-0">
+                                <thead class="text-center" style="background: #f1f5f9; color: #475569;">
                                     <tr>
-                                        <th style="width: 40%; vertical-align: middle;">Indikator Capaian (Kelompok <?php echo $data['kelompok_aktif']; ?>)</th>
-                                        <th class="text-center" style="width: 8%; background:#ffcccc; vertical-align: middle;">BB</th>
-                                        <th class="text-center" style="width: 8%; background:#ffeeba; vertical-align: middle;">MB</th>
-                                        <th class="text-center" style="width: 8%; background:#d4edda; vertical-align: middle;">BSH</th>
-                                        <th class="text-center" style="width: 8%; background:#c3e6cb; vertical-align: middle;">BSB</th>
-                                        <th class="text-center" style="width: 15%; vertical-align: middle;">Foto</th>
+                                        <th class="text-left py-4 px-4" style="width: 45%; font-size: 16px;">KRITERIA PENILAIAN</th>
+                                        <th style="width: 85px;">BB</th>
+                                        <th style="width: 85px;">MB</th>
+                                        <th style="width: 85px;">BSH</th>
+                                        <th style="width: 85px;">BSB</th>
+                                        <th style="width: 130px;">FOTO</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php 
-                                        $list_sub_elemen = $data['indikator'][$key_data] ?? [];
-                                    ?>
-                                    
-                                    <?php foreach ($list_sub_elemen as $sub_judul => $list_indikator) : ?>
-                                        <tr class="bg-light">
-                                            <td colspan="6"><strong><?php echo $sub_judul; ?></strong></td>
-                                        </tr>
-
-                                        <?php foreach ($list_indikator as $indikator) : ?>
-                                            <?php 
-                                                $id_indikator = $indikator['id'];
-                                                $deskripsi = $indikator['deskripsi'];
-                                                
-                                                // Cek nilai terakhir
-                                                $nilai_terakhir = '';
-                                                $foto_terakhir = '';
-                                                if (isset($data['nilai_terbaru'][$id_indikator])) {
-                                                    $nilai_terakhir = $data['nilai_terbaru'][$id_indikator]['nilai'];
-                                                    $foto_terakhir = $data['nilai_terbaru'][$id_indikator]['foto'];
-                                                }
+                                    <?php if (!empty($data['indikator'][$kat])) : ?>
+                                        <?php foreach ($data['indikator'][$kat] as $sub_judul => $list) : ?>
+                                            <tr style="background-color: #f8fafc;">
+                                                <td colspan="6" class="py-3 px-4">
+                                                    <span class="sub-judul-text"><i class="fas fa-bookmark mr-2 text-primary"></i> <?= $sub_judul; ?></span>
+                                                </td>
+                                            </tr>
+                                            <?php foreach ($list as $i) :
+                                                $id_i = $i['id'];
+                                                $val = $data['nilai_existing'][$id_i] ?? '';
+                                                $foto = $data['foto_existing'][$id_i] ?? '';
                                             ?>
-                                            <tr>
-                                                <td><?php echo $deskripsi; ?></td>
-                                                
-                                                <?php $nilai_options = ['BB', 'MB', 'BSH', 'BSB']; ?>
-                                                <?php foreach ($nilai_options as $opt) : ?>
-                                                    <td class="text-center">
-                                                        <input type="radio" 
-                                                               name="nilai[<?php echo $id_indikator; ?>]" 
-                                                               value="<?php echo $opt; ?>" 
-                                                               style="transform: scale(1.5);"
-                                                               <?php echo ($nilai_terakhir == $opt) ? 'checked' : ''; ?>>
+                                                <tr>
+                                                    <td class="align-middle px-4 py-4">
+                                                        <span class="deskripsi-text"><?= $i['deskripsi']; ?></span>
                                                     </td>
-                                                <?php endforeach; ?>
+                                                    <?php foreach (['BB', 'MB', 'BSH', 'BSB'] as $opt) : ?>
+                                                        <td class="align-middle p-2 text-center">
+                                                            <input type="radio" name="skala[<?= $id_i; ?>]" value="<?= $opt; ?>"
+                                                                id="r_<?= $id_i . $opt; ?>" class="eval-radio" <?= ($val == $opt) ? 'checked' : ''; ?>>
+                                                            <label for="r_<?= $id_i . $opt; ?>" class="eval-label <?= strtolower($opt); ?> shadow-sm"><?= $opt; ?></label>
+                                                        </td>
+                                                    <?php endforeach; ?>
+                                                    <td class="align-middle text-center">
+                                                        <div class="upload-ui-container">
+                                                            <input type="file" name="foto[<?= $id_i; ?>]" id="f_<?= $id_i; ?>" class="d-none" onchange="previewImage(this, <?= $id_i; ?>)" accept="image/*">
+                                                            <input type="hidden" name="hapus_foto[<?= $id_i; ?>]" id="h_<?= $id_i; ?>" value="0">
 
-                                                <td class="text-center">
-                                                    <div class="upload-ui-container" id="container_<?php echo $id_indikator; ?>">
-                                                        <!-- Input File Hidden -->
-                                                        <input type="file" class="hidden-input" 
-                                                               id="foto_<?php echo $id_indikator; ?>" 
-                                                               name="foto[<?php echo $id_indikator; ?>]" 
-                                                               accept="image/*"
-                                                               onchange="previewImage(this, <?php echo $id_indikator; ?>)">
-                                                        
-                                                        <!-- Input Hidden untuk Signal Hapus -->
-                                                        <input type="hidden" name="hapus_foto[<?php echo $id_indikator; ?>]" id="hapus_foto_<?php echo $id_indikator; ?>" value="0">
-                                                        
-                                                        <!-- State 1: Empty (Upload Icon) -->
-                                                        <div class="upload-box state-empty <?php echo $foto_terakhir ? 'd-none' : ''; ?>" 
-                                                             id="empty_<?php echo $id_indikator; ?>"
-                                                             onclick="document.getElementById('foto_<?php echo $id_indikator; ?>').click()">
-                                                            <i class="fas fa-camera icon-upload"></i>
-                                                            <span style="font-size: 10px; color: #999; position: absolute; bottom: 5px;">Browse</span>
-                                                        </div>
+                                                            <div class="upload-box shadow-sm <?= $foto ? 'state-filled' : 'state-empty'; ?>" id="box_<?= $id_i; ?>" onclick="document.getElementById('f_<?= $id_i; ?>').click()">
+                                                                <i class="fas fa-camera text-muted fa-2x icon-camera" style="<?= $foto ? 'display:none;' : '' ?>"></i>
 
-                                                        <!-- State 2: Filled (Preview) -->
-                                                        <div class="upload-box state-filled <?php echo $foto_terakhir ? '' : 'd-none'; ?>" 
-                                                             id="filled_<?php echo $id_indikator; ?>">
-                                                            <img src="<?php echo $foto_terakhir ? BASEURL . '/img/penilaian/' . $foto_terakhir : ''; ?>" 
-                                                                 id="preview_<?php echo $id_indikator; ?>"
-                                                                 class="preview-img" 
-                                                                 onclick="window.open(this.src, '_blank')"
-                                                                 title="Klik untuk memperbesar">
-                                                            
-                                                            <!-- Tombol Hapus -->
-                                                            <div class="remove-btn" onclick="removePhoto(<?php echo $id_indikator; ?>)">
+                                                                <img src="<?= $foto ? BASEURL . '/img/penilaian/' . $foto : ''; ?>"
+                                                                    id="prev_<?= $id_i; ?>"
+                                                                    style="<?= $foto ? 'display:block; width:100%; height:100%; object-fit:cover;' : 'display:none;' ?>">
+                                                            </div>
+
+                                                            <div class="remove-btn <?= $foto ? '' : 'd-none'; ?>" id="btn_rm_<?= $id_i; ?>" onclick="removePhoto(event, <?= $id_i; ?>)">
                                                                 <i class="fas fa-times"></i>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
                                         <?php endforeach; ?>
-                                    <?php endforeach; ?>
+                                    <?php endif; ?>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 <?php endforeach; ?>
-
             </div>
         </div>
-        
-        <div class="card-footer">
-            <div class="row">
-                <div class="col-md-12">
-                    <strong>Keterangan:</strong><br>
-                    <span class="badge" style="background:#ffcccc; color:#333;">BB</span> : Belum Berkembang &nbsp;|&nbsp; 
-                    <span class="badge" style="background:#ffeeba; color:#333;">MB</span> : Mulai Berkembang &nbsp;|&nbsp;
-                    <span class="badge" style="background:#d4edda; color:#333;">BSH</span> : Berkembang Sesuai Harapan &nbsp;|&nbsp;
-                    <span class="badge" style="background:#c3e6cb; color:#333;">BSB</span> : Berkembang Sangat Baik
+    </div>
+
+    <div class="row mt-4 mb-5">
+        <div class="col-md-7">
+            <div class="legend-box shadow-sm">
+                <h5 class="font-weight-bold text-dark border-bottom pb-2 mb-3">Keterangan Penilaian:</h5>
+                <div class="row">
+                    <div class="col-6">
+                        <p class="mb-1"><span class="badge" style="background:#fecaca; color:#991b1b;">BB</span> : Belum Berkembang</p>
+                        <p class="mb-1"><span class="badge" style="background:#fef08a; color:#854d0e;">MB</span> : Mulai Berkembang</p>
+                    </div>
+                    <div class="col-6">
+                        <p class="mb-1"><span class="badge" style="background:#bbf7d0; color:#14532d;">BSH</span> : Berkembang Sesuai Harapan</p>
+                        <p class="mb-1"><span class="badge" style="background:#bae6fd; color:#0c4a6e;">BSB</span> : Berkembang Sangat Baik</p>
+                    </div>
                 </div>
             </div>
+        </div>
+        <div class="col-md-5 text-right d-flex align-items-center justify-content-end">
+            <button type="submit" form="formPenilaian" class="btn btn-success btn-block shadow-lg py-4" style="border-radius: 20px; font-size: 22px; font-weight: 900;">
+                <i class="fas fa-save mr-2"></i> SIMPAN PENILAIAN HARIAN
+            </button>
         </div>
     </div>
 </form>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // 1. Logic Switcher Kelompok
-        const selectKelompok = document.getElementById('pilih_kelompok');
-        const idSiswa = document.getElementById('id_siswa_aktif').value;
+    function pindahTanggal(tgl) {
+        const idSiswa = "<?= $data['siswa']['id']; ?>";
+        const kelompok = "<?= $data['kelompok']; ?>";
+        window.location.href = `<?= BASEURL; ?>/penilaian/input/${idSiswa}/${kelompok}/${tgl}`;
+    }
 
-        selectKelompok.addEventListener('change', function() {
-            const kelompokPilih = this.value;
-            window.location.href = BASEURL + '/penilaian/input/' + idSiswa + '/' + kelompokPilih;
-        });
-    });
-
-    // 2. Logic Preview Image
     function previewImage(input, id) {
         if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            
+            const reader = new FileReader();
             reader.onload = function(e) {
-                // Set src preview
-                document.getElementById('preview_' + id).src = e.target.result;
-                
-                // Sembunyikan empty state, tampilkan filled state
-                document.getElementById('empty_' + id).classList.add('d-none');
-                document.getElementById('filled_' + id).classList.remove('d-none');
-                
-                // Reset signal hapus karena user upload baru
-                document.getElementById('hapus_foto_' + id).value = '0';
+                const preview = document.getElementById('prev_' + id);
+                const box = document.getElementById('box_' + id);
+                const removeBtn = document.getElementById('btn_rm_' + id);
+
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                box.classList.remove('state-empty');
+                box.classList.add('state-filled');
+                removeBtn.classList.remove('d-none');
+                document.getElementById('h_' + id).value = '0';
             }
-            
             reader.readAsDataURL(input.files[0]);
         }
     }
 
-    // 3. Logic Remove Photo
-    function removePhoto(id) {
-        // Reset input file
-        document.getElementById('foto_' + id).value = '';
-        
-        // Reset src preview (optional)
-        document.getElementById('preview_' + id).src = '';
-        
-        // Tampilkan empty state, sembunyikan filled state
-        document.getElementById('empty_' + id).classList.remove('d-none');
-        document.getElementById('filled_' + id).classList.add('d-none');
-        
-        // Set signal hapus menjadi 1
-        document.getElementById('hapus_foto_' + id).value = '1';
+    function removePhoto(event, id) {
+        event.stopPropagation();
+        const preview = document.getElementById('prev_' + id);
+        const box = document.getElementById('box_' + id);
+        const removeBtn = document.getElementById('btn_rm_' + id);
+        const inputFile = document.getElementById('f_' + id);
+
+        inputFile.value = '';
+        preview.src = '';
+        preview.style.display = 'none';
+        box.classList.add('state-empty');
+        box.classList.remove('state-filled');
+        removeBtn.classList.add('d-none');
+        document.getElementById('h_' + id).value = '1';
     }
 </script>
