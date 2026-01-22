@@ -160,4 +160,21 @@ class Penilaian_model
         }
         return $fotoArr;
     }
+
+    public function getRekapHarian($id_siswa, $kelompok, $tgl_mulai, $tgl_selesai)
+    {
+        $query = "SELECT p.*, i.deskripsi, i.kategori, i.sub_elemen
+              FROM penilaian p
+              JOIN indikator i ON p.id_indikator = i.id
+              WHERE p.id_siswa = :id_siswa
+              AND p.kelompok = :kelompok
+              AND p.tanggal BETWEEN :tgl_mulai AND :tgl_selesai
+              ORDER BY p.tanggal DESC";
+        $this->db->query($query);
+        $this->db->bind('id_siswa', $id_siswa);
+        $this->db->bind('kelompok', $kelompok);
+        $this->db->bind('tgl_mulai', $tgl_mulai);
+        $this->db->bind('tgl_selesai', $tgl_selesai);
+        return $this->db->resultSet();
+    }
 }
