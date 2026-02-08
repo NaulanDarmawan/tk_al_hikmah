@@ -34,11 +34,12 @@
                     <div class="form-group mt-3">
                         <label class="font-weight-bold text-muted">Sampai Tanggal:</label>
                         <input type="date" name="tgl_selesai" class="form-control shadow-sm" value="<?= date('Y-m-d'); ?>" style="border-radius: 8px;" required>
-                    </div>
-
-                    <button type="submit" class="btn btn-info btn-block shadow font-weight-bold py-3 mt-4" style="border-radius: 12px;">
-                        <i class="fas fa-file-pdf mr-2"></i> GENERATE LAPORAN PERKEMBANGAN
-                    </button>
+                    </div>                    
+                        <div class="">
+                            <button type="submit" formaction="<?= BASEURL; ?>/laporan/harian_excel" class="btn btn-info btn-block shadow font-weight-bold py-3" style="border-radius: 12px;">
+                                <i class="fas fa-file-excel mr-2"></i> CETAK LAPORAN
+                            </button>
+                        </div>                    
                 </form>
             </div>
         </div>

@@ -163,46 +163,45 @@ class Rapor extends Controller
             );
 
             // --- LOGIKA UPLOAD FOTO ---
-            $uploadDir = 'img/rapor/'; // Relative to public
-            $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+            $targetDir = dirname(__DIR__, 2) . '/public/img/rapor';
             $fields = ['foto_agama', 'foto_jati_diri', 'foto_literasi_steam', 'foto_p5'];
+            $uploadErrors = [];
 
             foreach ($fields as $field) {
-                // 1. Cek apakah ada file baru diupload
+                // 1. Tentukan nilai default (dari data lama atau null)
+                $oldValue = ($rapor_lama && isset($rapor_lama[$field])) ? $rapor_lama[$field] : null;
+                $data_form[$field] = $oldValue;
+
+                // 2. Cek apakah ada file baru yang diupload
                 if (isset($_FILES[$field]) && $_FILES[$field]['error'] === UPLOAD_ERR_OK) {
-                    $fileTmpPath = $_FILES[$field]['tmp_name'];
-                    $fileName = $_FILES[$field]['name'];
-                    $fileType = $_FILES[$field]['type'];
                     
-                    if (in_array($fileType, $allowedTypes)) {
-                        $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
-                        $newFileName = uniqid() . '_' . $field . '.' . $fileExtension;
-                        $dest_path = $uploadDir . $newFileName;
+                    // Prefix unik
+                    $prefix = uniqid() . '_' . $field . '_'; 
+                    
+                    // Proses Upload
+                    $newFileName = Uploader::process($_FILES[$field], $targetDir, $prefix);
 
-                        if (move_uploaded_file($fileTmpPath, $dest_path)) {
-                            $data_form[$field] = $newFileName;
+                    if ($newFileName) {
+                        // SUKSES: Update data form dengan nama file baru
+                        $data_form[$field] = $newFileName;
 
-                            // HAPUS FOTO LAMA JIKA ADA
-                            if ($rapor_lama && !empty($rapor_lama[$field])) {
-                                $path_foto_lama = 'img/rapor/' . $rapor_lama[$field];
-                                if (file_exists($path_foto_lama)) {
-                                    unlink($path_foto_lama);
-                                }
+                        // Hapus foto lama fisik jika ada & berbeda
+                        if ($oldValue && $oldValue !== $newFileName) {
+                            $path_foto_lama = $targetDir . '/' . $oldValue;
+                            if (file_exists($path_foto_lama)) {
+                                unlink($path_foto_lama);
                             }
-                        } else {
-                            $data_form[$field] = null; // Gagal upload
                         }
                     } else {
-                         $data_form[$field] = null; // Tipe salah
-                    }
-                } else {
-                    // 2. Jika TIDAK ada file baru, gunakan data LAMA (jika ada)
-                    if ($rapor_lama && isset($rapor_lama[$field])) {
-                        $data_form[$field] = $rapor_lama[$field];
-                    } else {
-                        $data_form[$field] = null;
+                        // GAGAL: Catat error, tapi data tetap pakai yang lama ($oldValue)
+                        $uploadErrors[] = "Gagal mengupload foto untuk kolom: $field";
                     }
                 }
+            }
+            
+            // Jika ada error upload, set Flash info tapi tetap lanjut simpan data teks
+            if (!empty($uploadErrors)) {
+                Flasher::setFlash('Warning', implode(', ', $uploadErrors), 'warning');
             }
             // --- AKHIR LOGIKA UPLOAD ---
 

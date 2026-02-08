@@ -64,7 +64,7 @@
                                 <td class="align-middle small">
                                     <strong><i class="fas fa-user-tie mr-1"></i> Ayah:</strong> <?= $siswa['nama_ayah']; ?><br>
                                     <strong><i class="fas fa-user-friends mr-1"></i> Ibu:</strong> <?= $siswa['nama_ibu']; ?><br>
-                                    <a href="https://wa.me/<?= ltrim($siswa['hp_ortu'], '0'); ?>" target="_blank" class="text-success font-weight-bold">
+                                    <a href="https://wa.me/62<?= ltrim($siswa['hp_ortu'], '0'); ?>" target="_blank" class="text-success font-weight-bold">
                                         <i class="fab fa-whatsapp"></i> <?= $siswa['hp_ortu']; ?>
                                     </a>
                                 </td>

@@ -169,7 +169,7 @@ class Penilaian_model
               WHERE p.id_siswa = :id_siswa
               AND p.kelompok = :kelompok
               AND p.tanggal BETWEEN :tgl_mulai AND :tgl_selesai
-              ORDER BY p.tanggal DESC";
+              ORDER BY p.tanggal ASC";
         $this->db->query($query);
         $this->db->bind('id_siswa', $id_siswa);
         $this->db->bind('kelompok', $kelompok);

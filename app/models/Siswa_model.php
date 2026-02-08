@@ -42,6 +42,22 @@ class Siswa_model
 
     public function tambahDataSiswa($data)
     {
+        // Cek dulu apakah NIS sudah ada
+        $this->db->query('SELECT id FROM ' . $this->table . ' WHERE nis = :nis');
+        $this->db->bind('nis', $data['nis']);
+        $this->db->execute();
+        if ($this->db->rowCount() > 0) {
+            return -1; // Kode khusus untuk Duplicate NIS
+        }
+
+        // Cek juga apakah NISN sudah ada
+        $this->db->query('SELECT id FROM ' . $this->table . ' WHERE nisn = :nisn');
+        $this->db->bind('nisn', $data['nisn']);
+        $this->db->execute();
+        if ($this->db->rowCount() > 0) {
+            return -2; // Kode khusus untuk Duplicate NISN
+        }
+
         // Siapkan query SQL untuk INSERT dengan SEMUA KOLOM
         $query = "INSERT INTO siswa (
             nisn, nis, nama_lengkap, nama_panggilan,

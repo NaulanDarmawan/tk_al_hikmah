@@ -63,8 +63,20 @@ class Siswa extends Controller
             $_POST['foto'] = $foto;
 
             // Lanjutkan proses simpan ke model
-            if ($this->model('Siswa_model')->tambahDataSiswa($_POST) > 0) {
+            $hasil = $this->model('Siswa_model')->tambahDataSiswa($_POST);
+            if ($hasil > 0) {
                 Flasher::setFlash('Data siswa', 'berhasil ditambahkan', 'success');
+                header('Location: ' . BASEURL . '/siswa');
+                exit;
+            } elseif ($hasil == -1) {
+                // Hapus foto yang sudah terlanjur diupload jika ada (optional, good practice)
+                // if ($_POST['foto'] != 'default.jpg' && file_exists('img/' . $_POST['foto'])) { unlink('img/' . $_POST['foto']); }
+                
+                Flasher::setFlash('Gagal Menambahkan', 'NIS sudah terdaftar. Gunakan NIS lain.', 'danger');
+                header('Location: ' . BASEURL . '/siswa');
+                exit;
+            } elseif ($hasil == -2) {
+                Flasher::setFlash('Gagal Menambahkan', 'NISN sudah terdaftar. Gunakan NISN lain.', 'danger');
                 header('Location: ' . BASEURL . '/siswa');
                 exit;
             } else {
